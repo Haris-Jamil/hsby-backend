@@ -18,12 +18,17 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
   console.log(hashedPassword);
-  const createdUser = userModel.create({
+  const createdUser = await userModel.create({
     username,
     email,
     password: hashedPassword,
   });
-  res.status(200).json(createdUser);
+
+  if (createdUser._id) {
+    res.status(200).json({ registered: true });
+  } else {
+    res.status(500).json({ registered: false });
+  }
 });
 
 const loginUser = asyncHandler(async (req, res) => {
@@ -41,7 +46,12 @@ const loginUser = asyncHandler(async (req, res) => {
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "1hr" }
     );
-    res.status(200).json({ accessToken });
+    res.cookie("hsby", accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+    });
+    res.status(200).json({ success: true });
   } else {
     res.status(401).send("wrong email or password");
   }
@@ -53,8 +63,19 @@ const getCurrentUser = asyncHandler(async (req, res) => {
   }
 });
 
+const userLogout = asyncHandler(async (req, res) => {
+  res.cookie("hsby", "", {
+    expires: new Date(0),
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+  });
+  res.status(200).json({ success: true });
+});
+
 module.exports = {
   registerUser,
   loginUser,
   getCurrentUser,
+  userLogout,
 };

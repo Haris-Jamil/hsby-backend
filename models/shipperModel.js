@@ -6,7 +6,7 @@ const shipperSchema = mongoose.Schema({
   city: String,
   address: String,
   email: String,
-  pickup_address: String,
+  pickupAddress: String,
 });
 
 module.exports = shipperSchema;
