@@ -5,7 +5,6 @@ const userRouter = require("./routes/userRoute");
 const errorHandler = require("./middlewares/errorHandler");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-// const validateToken = require("./middlewares/validateTokenHandler");
 
 require("dotenv").config();
 

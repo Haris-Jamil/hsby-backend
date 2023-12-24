@@ -5,9 +5,7 @@ const shipmentSchema = require("./shipmentModel");
 
 const orderSchema = mongoose.Schema(
   {
-    id: {
-      type: mongoose.Schema.Types.ObjectId,
-    },
+    id: mongoose.Schema.Types.ObjectId,
     date: String,
     deliveryDate: String,
     deliveryCharges: Number,
@@ -18,6 +16,10 @@ const orderSchema = mongoose.Schema(
     shipper: shipperSchema,
     consignee: consigneeSchema,
     shipment: shipmentSchema,
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   {
     timestamps: true,

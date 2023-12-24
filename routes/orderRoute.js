@@ -5,6 +5,8 @@ const {
   getFilteredOrders,
   getOrderByTrackingId,
   saveOrder,
+  deleteOrder,
+  orderStatusCount,
 } = require("../controllers/orderController");
 const validateToken = require("../middlewares/validateTokenHandler");
 const orderRouter = express.Router();
@@ -18,4 +20,7 @@ orderRouter.get(
   validateToken,
   getOrderByTrackingId
 );
+orderRouter.get("/delete/:id", validateToken, deleteOrder);
+orderRouter.get("/statusCount/", orderStatusCount);
+orderRouter.get("/statusCount/:userId", orderStatusCount);
 module.exports = orderRouter;

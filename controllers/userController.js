@@ -17,11 +17,12 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  console.log(hashedPassword);
   const createdUser = await userModel.create({
     username,
     email,
     password: hashedPassword,
+    role: "client",
+    isActive: false,
   });
 
   if (createdUser._id) {
@@ -34,6 +35,11 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const user = await userModel.findOne({ email });
+  if (user) {
+    if (!user.isActive) {
+      res.status(401).send("account not active");
+    }
+  }
   if (user && (await bcrypt.compare(password, user.password))) {
     const accessToken = jwt.sign(
       {
@@ -44,7 +50,7 @@ const loginUser = asyncHandler(async (req, res) => {
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "1hr" }
+      { expiresIn: "1d" }
     );
     res.cookie("hsby", accessToken, {
       httpOnly: true,
@@ -59,7 +65,9 @@ const loginUser = asyncHandler(async (req, res) => {
 
 const getCurrentUser = asyncHandler(async (req, res) => {
   if (req.user) {
-    res.status(200).json(req.user);
+    let user = await userModel.find({ _id: req.user.id }).lean();
+    let { password, _id, ...restUser } = user[0];
+    res.status(200).json({ ...restUser, id: _id });
   }
 });
 
@@ -73,9 +81,50 @@ const userLogout = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true });
 });
 
+const getAllUsers = asyncHandler(async (req, res) => {
+  let users = await userModel
+    .find({ username: { $not: { $eq: "admin" } } })
+    .lean();
+  res.status(200).json(users);
+});
+
+const saveUser = asyncHandler(async (req, res) => {
+  const { _id, ...user } = req.body;
+  const response = await userModel.findOneAndUpdate({ _id }, user);
+  res.status(200).json({ success: true });
+});
+
+const deleteUser = asyncHandler(async (req, res) => {
+  const userId = req.params.id;
+  const response = await userModel.findOneAndDelete({ _id: userId });
+  res.status(200).json(response);
+});
+
+const changePassword = asyncHandler(async (req, res) => {
+  const passData = req.body;
+  const user = await userModel.find({ _id: req.user.id }).lean();
+  const currentPasswordMatched = await bcrypt.compare(
+    passData.currentPassword,
+    user[0].password
+  );
+  if (currentPasswordMatched) {
+    const hashedPassword = await bcrypt.hash(passData.newPassword, 10);
+    const response = await userModel.findOneAndUpdate(
+      { _id: req.user.id },
+      { password: hashedPassword }
+    );
+    res.status(200).json({ success: true });
+  }
+  res.status(200).json({ success: false, msg: "wrong current password" });
+});
+
 module.exports = {
   registerUser,
   loginUser,
   getCurrentUser,
   userLogout,
+  getAllUsers,
+  saveUser,
+  deleteUser,
+  changePassword,
 };
