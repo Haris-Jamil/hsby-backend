@@ -23,6 +23,7 @@ const orderSchema = mongoose.Schema(
   },
   {
     timestamps: true,
+    collation: { locale: "en", strength: 2 },
   }
 );
 

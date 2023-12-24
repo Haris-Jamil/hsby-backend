@@ -46,7 +46,11 @@ const getOrder = asyncHandler(async (req, res) => {
 });
 
 const getFilteredOrders = asyncHandler(async (req, res) => {
-  const orders = await orderModel.find(req.body);
+  let orders = await orderModel.find(req.body).populate("userId").lean();
+  orders = orders.map((order) => {
+    delete order["userId"].password;
+    return order;
+  });
   res.status(200).json(orders);
 });
 
