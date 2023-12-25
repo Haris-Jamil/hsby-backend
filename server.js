@@ -15,7 +15,8 @@ const port = process.env.PORT || 5000;
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:4200",
+    origin:
+      "https://65897fc256d734e8b6d1a1b9--astounding-sundae-81d624.netlify.app/",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
     optionsSuccessStatus: 204,
