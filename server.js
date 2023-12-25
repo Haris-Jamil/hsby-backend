@@ -18,7 +18,6 @@ app.use(
     origin:
       "https://65898d35e2582cef59e19c72--astounding-sundae-81d624.netlify.app/",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true,
     optionsSuccessStatus: 204,
   })
 );
