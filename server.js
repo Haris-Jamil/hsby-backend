@@ -13,14 +13,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(cookieParser());
-app.use(
-  cors({
-    origin:
-      "https://65898d35e2582cef59e19c72--astounding-sundae-81d624.netlify.app/",
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    optionsSuccessStatus: 204,
-  })
-);
+app.use(cors());
 app.use(express.json());
 app.use("/api/order", orderRouter);
 app.use("/api/user", userRouter);
