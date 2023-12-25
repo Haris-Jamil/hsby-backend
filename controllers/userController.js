@@ -55,7 +55,6 @@ const loginUser = asyncHandler(async (req, res) => {
     res.cookie("hsby", accessToken, {
       httpOnly: true,
       secure: true,
-      sameSite: "strict",
     });
     res.status(200).json({ success: true });
   } else {
