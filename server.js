@@ -8,7 +8,6 @@ const cookieParser = require("cookie-parser");
 
 require("dotenv").config();
 
-connectDB();
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -19,6 +18,8 @@ app.use("/api/order", orderRouter);
 app.use("/api/user", userRouter);
 app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`server is running on port ${port}`);
+connectDB().then(() => {
+  app.listen(port, () => {
+    console.log(`server is running on port ${port}`);
+  });
 });
