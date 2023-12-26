@@ -12,8 +12,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 const corsConfig = {
-  origin:
-    "https://65898d35e2582cef59e19c72--astounding-sundae-81d624.netlify.app",
+  origin: "https://astounding-sundae-81d624.netlify.app",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
   optionsSuccessStatus: 204,
